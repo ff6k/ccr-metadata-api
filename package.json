@@ -1,0 +1,26 @@
+{
+  "name": "metadata-api-nodejs",
+  "version": "1.0.0",
+  "description": "CCR metadata API for crypto collectibles",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "author": "Cooler",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "moment": "^2.22.2",
+    "web3-eth-contract": "^1.6.1"
+  },
+  "devDependencies": {
+    "request": "^2.81.0",
+    "tape": "^4.7.0"
+  },
+  "engines": {
+    "node": "8.11.2"
+  }
+}
