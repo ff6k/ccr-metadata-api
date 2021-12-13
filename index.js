@@ -79,6 +79,10 @@ app.get("/api/ipfs_hash", function (req, res) {
   res.send(IPFS_HASH);
 })
 
+const btoa = (text) => {
+  return Buffer.from(text, 'binary').toString('base64');
+};
+
 app.get("/api/tokenImage", async function (req, res) {
   try {
     const ipfsArray = [];
