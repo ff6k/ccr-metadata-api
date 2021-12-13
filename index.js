@@ -51,8 +51,8 @@ app.get("/api/token/:token_id", async function (req, res) {
 
     const data = {
       "name": "Certificate of Carbon Removal",
-      "description": "CCR full desription",
-      "external_url": "https://carboncapturebackers.com/",
+      "description": "Record of Carbon Removal Credits (CRC) claimed",
+      "external_url": "https://www.carbonlandtrust.com/",
       "attributes": [
         {
           "trait_type": "Claimer",
