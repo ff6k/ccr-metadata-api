@@ -22,7 +22,7 @@ const artImage = (obj) => {
             </tspan>
             </text>
             <text id="CRC claimed" style="transform: matrix(1,0,0,1,1133.646,665.209)">
-                <tspan x=${140 - (tonsCO2.toString()).length * 10} y="33.6" class="txt1">${tonsCO2}</tspan>
+                <tspan x="${(140 - (tonsCO2.toString()).length * 10).toString()}" y="33.6" class="txt1">${tonsCO2}</tspan>
             </text>
             <text id="Date Claimed" style="transform: matrix(1,0,0,1,1133.646,896.108)">
                 <tspan x="46" y="33.6" class="txt1">${mintDate}

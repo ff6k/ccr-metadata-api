@@ -5,6 +5,9 @@ const { ABI } = require('./src/abi.js')
 const cors = require('cors');
 const Web3EthContract = require('web3-eth-contract');
 const { artImage } = require('./src/art_image');
+const axios = require('axios');
+
+let IPFS_HASH = [];
 
 // Set provider for all later instances to use
 Web3EthContract.setProvider(PROVIDER);
@@ -32,8 +35,6 @@ const app = express()
 
 app.use(cors(corsOpts));
 
-
-
 // Static public files
 app.use(express.static(path.join(__dirname, "public")))
 
@@ -47,9 +48,6 @@ app.get("/api/token/:token_id", async function (req, res) {
     const claimer = await contract.methods.tokenClaimer(tokenId).call();
     const tonsCO2 = await contract.methods.tokenTonsCO2(tokenId).call();
     const urlMemo = await contract.methods.tokenURLAndMemo(tokenId).call();
-    const timeStamp = await contract.methods.tokenTimeStamp(tokenId).call();
-    const mintDate = (new Date(timeStamp * 1000)).toLocaleDateString();
-    const imageURL = encodeURI(`${HOST_URL}/api/tokenImage/?claimer=${claimer}&urlMemo=${urlMemo}&mintDate=${mintDate}&tonsCO2=${tonsCO2}`);
 
     const data = {
       "name": "Certificate of Carbon Removal",
@@ -69,7 +67,7 @@ app.get("/api/token/:token_id", async function (req, res) {
           "value": urlMemo
         }
       ],
-      "image": imageURL
+      "image": IPFS_HASH[tokenId] ? `ipfs://${IPFS_HASH[tokenId]}/images/${tokenId}.svg` : ""
     }
     res.send(data);
   } catch (error) {
@@ -77,10 +75,35 @@ app.get("/api/token/:token_id", async function (req, res) {
   }
 })
 
+app.get("/api/ipfs_hash", function (req, res) {
+  res.send(IPFS_HASH);
+})
+
 app.get("/api/tokenImage", async function (req, res) {
   try {
+    const ipfsArray = [];
     const { claimer, urlMemo, mintDate, tonsCO2 } = req.query;
-    res.send(artImage({ claimer, urlMemo, mintDate, tonsCO2 }));
+    const image = artImage({ claimer, urlMemo, mintDate, tonsCO2 });
+    const tokenId = await contract.methods.totalSupply().call();
+    ipfsArray.push({
+      path: `images/${tokenId}.svg`,
+      content: btoa(image)
+    })
+    const results = await axios.post("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder",
+      ipfsArray,
+      {
+        headers: {
+          "X-API-KEY": 'H3fVuMfmzdzUloT47ASDQWRfkaS1Lhg5o4iGqslch2jWftrHYRS0HaYRlogdz2QI',
+          "Content-Type": "application/json",
+          "accept": "application/json"
+        }
+      }
+    )
+    const [result] = results.data;
+    let { path } = result;
+    path = ((path.split("ipfs/"))[1].split("/images"))[0];
+    IPFS_HASH[tokenId] = path;
+    res.send(results.data);
   } catch (error) {
     console.log(error);
     res.status(500).send("Server Error");
