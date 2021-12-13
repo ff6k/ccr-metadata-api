@@ -13,13 +13,7 @@
     "axios": "^0.24.0",
     "cors": "^2.8.5",
     "ejs": "^2.6.1",
-    "express": "^4.16.4",
-    "getconfig": "^4.5.0",
-    "go-ipfs": "^0.8.0",
-    "inquirer": "^8.0.0",
-    "ipfs-http-client": "^54.0.2",
-    "moment": "^2.22.2",
-    "web3": "^1.6.1"
+    "express": "^4.16.4"
   },
   "devDependencies": {
     "request": "^2.81.0",
