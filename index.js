@@ -59,7 +59,33 @@ app.get("/api/token/:token_id", async function (req, res) {
     let hash_data = await fs.readFileSync(`${__dirname}/ipfs.txt`, 'utf8');
     hash_data = JSON.parse(hash_data);
     const IPFS_HASH = hash_data[CONTRACT_ADDRESS];
-
+    if(!IPFS_HASH) IPFS_HASH = {};
+    if (!IPFS_HASH[tokenId]) {
+      const ipfsArray = [];
+      const date = await contract.methods.tokenTimeStamp(tokenId).call();
+      const mintDate = (new Date(date * 1000)).toLocaleDateString();
+      const image = artImage({ claimer, urlMemo, mintDate, tonsCO2 });
+      ipfsArray.push({
+        path: `images/${tokenId}.svg`,
+        content: btoa(image)
+      })
+      const results = await axios.post("https://deep-index.moralis.io/api/v2/ipfs/uploadFolder",
+        ipfsArray,
+        {
+          headers: {
+            "X-API-KEY": 'H3fVuMfmzdzUloT47ASDQWRfkaS1Lhg5o4iGqslch2jWftrHYRS0HaYRlogdz2QI',
+            "Content-Type": "application/json",
+            "accept": "application/json"
+          }
+        }
+      )
+      const [result] = results.data;
+      let { path } = result;
+      path = ((path.split("ipfs/"))[1].split("/images"))[0];
+      if (!hash_data[CONTRACT_ADDRESS]) hash_data[CONTRACT_ADDRESS] = {};
+      hash_data[CONTRACT_ADDRESS][tokenId] = path;
+      await fs.writeFileSync(`${__dirname}/ipfs.txt`, JSON.stringify(hash_data));
+    }
     const data = {
       "name": "Certificate of Carbon Removal",
       "description": "Record of Carbon Removal Credits (CRC) claimed",
