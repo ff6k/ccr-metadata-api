@@ -1,13 +1,12 @@
 const express = require("express")
 const path = require("path")
+const fs = require("fs");
 const { CONTRACT_ADDRESS, PROVIDER, HOST_URL } = require("./src/constants")
 const { ABI } = require('./src/abi.js')
 const cors = require('cors');
 const Web3EthContract = require('web3-eth-contract');
 const { artImage } = require('./src/art_image');
 const axios = require('axios');
-
-let IPFS_HASH = [];
 
 // Set provider for all later instances to use
 Web3EthContract.setProvider(PROVIDER);
@@ -42,12 +41,24 @@ app.get("/", function (req, res) {
   res.send("Get ready for OpenSea!");
 })
 
+app.get("/ipfs_hash_data", async function (req, res) {
+  try {
+    let hash_data = await fs.readFileSync(`${__dirname}/ipfs.txt`, 'utf8');
+    res.send(hash_data);
+  } catch (error) {
+    res.status(500).send("Server Error");
+  }
+})
+
 app.get("/api/token/:token_id", async function (req, res) {
   try {
     const tokenId = parseInt(req.params.token_id).toString();
     const claimer = await contract.methods.tokenClaimer(tokenId).call();
     const tonsCO2 = await contract.methods.tokenTonsCO2(tokenId).call();
     const urlMemo = await contract.methods.tokenURLAndMemo(tokenId).call();
+    let hash_data = await fs.readFileSync(`${__dirname}/ipfs.txt`, 'utf8');
+    hash_data = JSON.parse(hash_data);
+    const IPFS_HASH = hash_data[CONTRACT_ADDRESS];
 
     const data = {
       "name": "Certificate of Carbon Removal",
@@ -71,6 +82,7 @@ app.get("/api/token/:token_id", async function (req, res) {
     }
     res.send(data);
   } catch (error) {
+    console.log(error);
     res.status(500).send("Server Error");
   }
 })
@@ -106,7 +118,11 @@ app.get("/api/tokenImage", async function (req, res) {
     const [result] = results.data;
     let { path } = result;
     path = ((path.split("ipfs/"))[1].split("/images"))[0];
-    IPFS_HASH[tokenId] = path;
+    let hash_data = await fs.readFileSync(`${__dirname}/ipfs.txt`, 'utf8');
+    hash_data = JSON.parse(hash_data);
+    if (!hash_data[CONTRACT_ADDRESS]) hash_data[CONTRACT_ADDRESS] = {};
+    hash_data[CONTRACT_ADDRESS][tokenId] = path;
+    await fs.writeFileSync(`${__dirname}/ipfs.txt`, JSON.stringify(hash_data));
     res.send(results.data);
   } catch (error) {
     console.log(error);

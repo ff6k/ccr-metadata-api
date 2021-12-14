@@ -1,5 +1,5 @@
 const PROVIDER = 'https://volta-rpc.energyweb.org'
-const CONTRACT_ADDRESS = '0x9e363D58A856f32F842fB3e93EBB405f2BB887FD'
+const CONTRACT_ADDRESS = '0xE9e2362DB19583DE7329cE2EaE816Ea9d94c8285'
 const HOST_URL="https://ccr-metadata.herokuapp.com"
 
 module.exports = {
