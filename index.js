@@ -90,10 +90,6 @@ const btoa = (text) => {
   return Buffer.from(text, 'binary').toString('base64');
 };
 
-// const accountNonce = '0x' + (await web3.eth.getTransactionCount(account) + 1).toString(16);
-
-console.log(accountNonce);
-
 const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
   const [account] = await Web3.eth.getAccounts();
 
