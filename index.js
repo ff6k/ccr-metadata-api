@@ -93,6 +93,10 @@ const btoa = (text) => {
 const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
   const [account] = await web3.eth.getAccounts();
 
+  const accountNonce =
+  '0x' + (web3.eth.getTransactionCount(account) + 1).toString(16);
+
+  console.log(accountNonce);
   return CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI).estimateGas({ from: account })
     .then(gasAmount => {
       return CCR_CONTRACT.methods.mintCCR(tokenOwner, 100, 'Wai Fung', "Memo", tokenURI)
