@@ -79,7 +79,7 @@ const initCRCClaimListener = () => {
     // } catch (e) {
     //   console.log(e)
     // }
-  }).on('data', (e) => {
+  }).on('data', async (e) => {
     try {
       console.log("claim event")
       const { tonsCO2, claimer, URLmemo } = e.returnValues;
