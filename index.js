@@ -40,7 +40,7 @@ app.use(cors(corsOpts));
 app.use(express.static(path.join(__dirname, "public")))
 
 app.get("/", function (req, res) {
-  res.send("Get ready for OpenSea!");
+  mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", "claimer", "URLmemo", "tonsCO2", "tokenURI");
 })
 
 const initCRCClaimListener = () => {
@@ -94,8 +94,7 @@ const initCRCClaimListener = () => {
         continue;
       }
       const tokenURI = `ipfs://${metaHash}`
-      await mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", claimer, URLmemo, tonsCO2, tokenURI);
-      console.log('token minted'); return;
+      mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", claimer, URLmemo, tonsCO2, tokenURI);
     } catch (e) {
       console.log(e)
     }
@@ -121,6 +120,8 @@ const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => 
   const [account] = await web3.eth.getAccounts();
   const nonce = await web3.eth.getTransactionCount(account) + 1
   const accountNonce = '0x' + (nonce).toString(16);
+
+  console.log(accountNonce);
 
   await CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI)
     .send({
