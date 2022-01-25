@@ -102,8 +102,8 @@ const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => 
       return CCR_CONTRACT.methods.mintCCR(tokenOwner, 100, 'Wai Fung', "Memo", tokenURI)
         .send({
           from: account,
-          // gas: gasAmount,
-          // nonce: 1000
+          gas: gasAmount,
+          nonce: accountNonce
         }).then().catch(error => {
           console.log(error);
         })
