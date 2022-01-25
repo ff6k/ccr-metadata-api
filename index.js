@@ -11,22 +11,12 @@ const axios = require('axios');
 const Web3WsProvider = require('web3-providers-ws');
 const HDWalletProvider = require("truffle-hdwallet-provider");
 const Web3 = require('web3');
-const ethers = require('ethers');
 
-const connectionProvider = new Web3.providers.HttpProvider("https://volta-rpc.energyweb.org");
+const connectionProvider = new Web3WsProvider(PROVIDER);
 const zeroExPrivateKeys = ["3a30f6a3d4dee81eacc917782b58f40c9d2846251866d35c2180e83ea94982d9"];
 
 const walletProvider = new HDWalletProvider(zeroExPrivateKeys, connectionProvider);
 const web3 = new Web3(walletProvider);
-
-// const provider = new ethers.providers.JsonRpcProvider('https://volta-rpc.energyweb.org');
-
-// let privateKey = '3a30f6a3d4dee81eacc917782b58f40c9d2846251866d35c2180e83ea94982d9';
-// let wallet = new ethers.Wallet(privateKey, provider);
-
-// const CCR_CONTRACT = new ethers.Contract(CCR_CONTRACT_ADDRESS, CCR_ABI, provider);
-
-// let contractWithSigner = CCR_CONTRACT.connect(wallet);
 
 // const CRC_CONTRACT = new web3.eth.Contract(CRC_ABI, CRC_CONTRACT_ADDRESS);
 
@@ -54,46 +44,14 @@ app.use(cors(corsOpts));
 // Static public files
 app.use(express.static(path.join(__dirname, "public")))
 
-app.get("/", async (req, res) => {
-  const result = await mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", "claimer", "URLmemo", 100, "tokenURI");
-  console.log(result);
-  res.send("OK!")
-})
-
 const initCRCClaimListener = () => {
   // Set provider for all later instances to use
   Web3EthContract.setProvider(PROVIDER);
   const CRC_CONTRACT = new Web3EthContract(CRC_ABI, CRC_CONTRACT_ADDRESS);
   CRC_CONTRACT.events.Claim(async (error, events) => {
-    // try {
-    //   console.log("claim event")
-    //   const { tonsCO2, claimer, URLmemo } = events.returnValues;
-    //   let artHash, metaHash;
-    //   while (true) {
-    //     let temp = await uploadArtImage(claimer, URLmemo, tonsCO2);
-    //     if (temp) {
-    //       artHash = temp; break;
-    //     }
-    //     continue;
-    //   }
-
-    //   while (true) {
-    //     let temp = await uploadMetaJson(claimer, URLmemo, tonsCO2, artHash);
-    //     if (temp) {
-    //       metaHash = temp; break;
-    //     }
-    //     continue;
-    //   }
-    //   const tokenURI = `ipfs://${metaHash}`
-    //   await mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", claimer, URLmemo, tonsCO2, tokenURI);
-    //   console.log('token minted'); return;
-    // } catch (e) {
-    //   console.log(e)
-    // }
-  }).on('data', async (e) => {
     try {
       console.log("claim event")
-      const { tonsCO2, claimer, URLmemo } = e.returnValues;
+      const { tonsCO2, claimer, URLmemo, tokenOwner } = events.returnValues;
       let artHash, metaHash;
       while (true) {
         let temp = await uploadArtImage(claimer, URLmemo, tonsCO2);
@@ -111,15 +69,15 @@ const initCRCClaimListener = () => {
         continue;
       }
       const tokenURI = `ipfs://${metaHash}`
-      mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", claimer, URLmemo, tonsCO2, tokenURI);
+      await mintCCRToken(tokenOwner, claimer, URLmemo, tonsCO2, tokenURI);
+      console.log('token minted'); return;
     } catch (e) {
       console.log(e)
     }
+  }).on('error', (e) => {
+    initCRCClaimListener();
+    console.log('--ClaimEvent--Error');
   })
-    .on('error', (e) => {
-      initCRCClaimListener();
-      console.log('--ClaimEvent--Error');
-    })
 }
 
 const btoa = (text) => {
@@ -127,15 +85,10 @@ const btoa = (text) => {
 };
 
 const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
-  console.log('mintccr')
   const CCR_CONTRACT = new web3.eth.Contract(CCR_ABI, CCR_CONTRACT_ADDRESS);
   const [account] = await web3.eth.getAccounts();
-  console.log(account)
   const nonce = await web3.eth.getTransactionCount(account)
   const accountNonce = '0x' + (nonce).toString(16);
-
-  console.log(accountNonce);
-
   return CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI)
     .send({
       from: account,
@@ -217,7 +170,6 @@ const uploadMetaJson = async (claimer, urlMemo, tonsCO2, artHash) => {
 
     return (path.split("ipfs/"))[1];
   } catch (error) {
-    console.log("[[[]", error);
     return null;
   }
 }
