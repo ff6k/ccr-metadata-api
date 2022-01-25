@@ -95,23 +95,13 @@ const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => 
   const nonce = await web3.eth.getTransactionCount(account) + 1
   const accountNonce = '0x' + (nonce).toString(16);
 
-  console.log(accountNonce);
-  // return CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI).estimateGas({ from: account })
-  //   .then(gasAmount => {
-      return CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI)
-        .send({
-          from: account,
-          // gas: gasAmount,
-          nonce: accountNonce
-        }).then(() => {
-          console.log("======minited token")
-        }).catch(error => {
-          console.log(error);
-        })
-    // })
-    // .catch(err => {
-    //   return err
-    // })
+  await CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI)
+    .send({
+      from: account,
+      nonce: accountNonce
+    })
+  console.log("received res")
+
 }
 
 const uploadArtImage = async (claimer, urlMemo, tonsCO2) => {
