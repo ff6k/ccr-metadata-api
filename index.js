@@ -54,9 +54,35 @@ const initCRCClaimListener = () => {
   Web3EthContract.setProvider(PROVIDER);
   const CRC_CONTRACT = new Web3EthContract(CRC_ABI, CRC_CONTRACT_ADDRESS);
   CRC_CONTRACT.events.Claim(async (error, events) => {
+    // try {
+    //   console.log("claim event")
+    //   const { tonsCO2, claimer, URLmemo } = events.returnValues;
+    //   let artHash, metaHash;
+    //   while (true) {
+    //     let temp = await uploadArtImage(claimer, URLmemo, tonsCO2);
+    //     if (temp) {
+    //       artHash = temp; break;
+    //     }
+    //     continue;
+    //   }
+
+    //   while (true) {
+    //     let temp = await uploadMetaJson(claimer, URLmemo, tonsCO2, artHash);
+    //     if (temp) {
+    //       metaHash = temp; break;
+    //     }
+    //     continue;
+    //   }
+    //   const tokenURI = `ipfs://${metaHash}`
+    //   await mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", claimer, URLmemo, tonsCO2, tokenURI);
+    //   console.log('token minted'); return;
+    // } catch (e) {
+    //   console.log(e)
+    // }
+  }).on('data', (e) => {
     try {
       console.log("claim event")
-      const { tonsCO2, claimer, URLmemo } = events.returnValues;
+      const { tonsCO2, claimer, URLmemo } = e.returnValues;
       let artHash, metaHash;
       while (true) {
         let temp = await uploadArtImage(claimer, URLmemo, tonsCO2);
