@@ -54,72 +54,43 @@ app.get("/", function (req, res) {
   res.send("Get ready for OpenSea!");
 })
 
-// console.log(CRC_CONTRACT.events)
+const initCRCClaimListener = () => {
+  CRC_CONTRACT.events.Claim(async (error, events) => {
+    console.log("claim event");
+    try {
+      const { tonsCO2, claimer, URLmemo } = events.returnValues;
+      let artHash, metaHash;
+      while (true) {
+        let temp = await uploadArtImage(claimer, URLmemo, tonsCO2);
+        if (temp) {
+          artHash = temp; break;
+        }
+        continue;
+      }
 
-// CRC_CONTRACT.events.Claim()
-//   .on('data', async (result) => {
-//     console.log('event')
-//   })
-//   .on('connected', () => {
-//     console.log('connected');
-//   })
-//   .on('error', async (error, receipt) => { // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-//     console.log("[][][][]")
-//     // this.MintListener();
-//   });
-
-CRC_CONTRACT.events.Claim({}, async (error, events) => {
-  console.log("claim eventsss");
-})
-  .on("connected", function (subscriptionId) {
-    console.log("connected");
+      while (true) {
+        let temp = await uploadMetaJson(claimer, URLmemo, tonsCO2, artHash);
+        if (temp) {
+          metaHash = temp; break;
+        }
+        continue;
+      }
+      const tokenURI = `ipfs://${metaHash}`
+      await mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", claimer, URLmemo, tonsCO2, tokenURI);
+      console.log('token minted'); return;
+    } catch (e) {
+      console.log(e)
+    }
   })
-  .on('data', (event) => { console.log("triggered event") })
-  .on('changed', (event) => {
-    console.log('--SomeEvent--Changed');
-  })
-  .on('error', (e) => {
-    console.log('--SomeEvent--Error');
-    console.log(e)
-  })
-// const initCRCClaimListener = () => {
-//   try {
-//     CRC_CONTRACT.events.Claim(async (error, events) => {
-//       console.log("claim event");
-//       // try {
-//       //   if (error) {
-//       //     initCRCClaimListener();
-//       //   } else {
-//       //     const { tonsCO2, claimer, URLmemo } = events.returnValues;
-//       //     let artHash, metaHash;
-//       //     while (true) {
-//       //       let temp = await uploadArtImage(claimer, URLmemo, tonsCO2);
-//       //       if (temp) {
-//       //         artHash = temp; break;
-//       //       }
-//       //       continue;
-//       //     }
-
-//       //     while (true) {
-//       //       let temp = await uploadMetaJson(claimer, URLmemo, tonsCO2, artHash);
-//       //       if (temp) {
-//       //         metaHash = temp; break;
-//       //       }
-//       //       continue;
-//       //     }
-//       //     const tokenURI = `ipfs://${metaHash}`
-//       //     await mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", claimer, URLmemo, tonsCO2, tokenURI);
-//       //     console.log('token minted'); return;
-//       //   }
-//       // } catch (e) {
-//       //   console.log(e)
-//       // }
-//     })
-//   } catch (e) {
-//     console.log("initial error", e)
-//     initCRCClaimListener();
-//   }
-// }
+    .on('data', (event) => { console.log("triggered event") })
+    .on('changed', (event) => {
+      console.log('--ClaimEvent--Changed');
+    })
+    .on('error', (e) => {
+      console.log('--ClaimEvent--Error');
+      initCRCClaimListener();
+    })
+}
 
 const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
   const [account] = await web3.eth.getAccounts();
@@ -218,7 +189,7 @@ const uploadMetaJson = async (claimer, urlMemo, tonsCO2, artHash) => {
   }
 }
 
-// initCRCClaimListener();
+initCRCClaimListener();
 
 app.listen(app.get("port"), function () {
   console.log("Node app is running on port", app.get("port"));
