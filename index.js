@@ -40,7 +40,7 @@ app.use(cors(corsOpts));
 app.use(express.static(path.join(__dirname, "public")))
 
 app.get("/", function (req, res) {
-  mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", "claimer", "URLmemo", "tonsCO2", "tokenURI");
+  mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", "claimer", "URLmemo", 100, "tokenURI");
 })
 
 const initCRCClaimListener = () => {
