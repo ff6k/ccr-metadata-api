@@ -90,11 +90,14 @@ const btoa = (text) => {
   return Buffer.from(text, 'binary').toString('base64');
 };
 
-const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
-  const [account] = await web3.eth.getAccounts();
+// const accountNonce = '0x' + (await web3.eth.getTransactionCount(account) + 1).toString(16);
 
-  const accountNonce =
-  '0x' + (web3.eth.getTransactionCount(account) + 1).toString(16);
+console.log(accountNonce);
+
+const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
+  const [account] = await Web3.eth.getAccounts();
+
+  const accountNonce = '0x' + (await Web3.eth.getTransactionCount(account) + 1).toString(16);
 
   console.log(accountNonce);
   return CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI).estimateGas({ from: account })
