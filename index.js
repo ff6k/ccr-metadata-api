@@ -53,9 +53,9 @@ const initCRCClaimListener = () => {
   // Set provider for all later instances to use
   Web3EthContract.setProvider(PROVIDER);
   const CRC_CONTRACT = new Web3EthContract(CRC_ABI, CRC_CONTRACT_ADDRESS);
-
   CRC_CONTRACT.events.Claim(async (error, events) => {
     try {
+      console.log("claim event")
       const { tonsCO2, claimer, URLmemo } = events.returnValues;
       let artHash, metaHash;
       while (true) {
@@ -98,7 +98,8 @@ const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => 
       return CCR_CONTRACT.methods.mintCCR(tokenOwner, 100, 'Wai Fung', "Memo", tokenURI)
         .send({
           from: account,
-          gas: gasAmount
+          gas: gasAmount,
+          nonce: web3.eth.getTransactionCount() + 1
         }).then().catch(error => {
           console.log(error);
         })
