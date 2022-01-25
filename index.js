@@ -92,6 +92,10 @@ const initCRCClaimListener = () => {
     })
 }
 
+const btoa = (text) => {
+  return Buffer.from(text, 'binary').toString('base64');
+};
+
 const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
   const [account] = await web3.eth.getAccounts();
 
@@ -408,10 +412,6 @@ app.listen(app.get("port"), function () {
 // app.get("/api/ipfs_hash", function (req, res) {
 //   res.send(IPFS_HASH);
 // })
-
-// const btoa = (text) => {
-//   return Buffer.from(text, 'binary').toString('base64');
-// };
 
 // app.get("/api/tokenImage", async function (req, res) {
 //   try {
