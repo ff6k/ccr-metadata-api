@@ -99,7 +99,7 @@ const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => 
         .send({
           from: account,
           gas: gasAmount,
-          nonce: web3.eth.getTransactionCount() + 1
+          nonce: 1000
         }).then().catch(error => {
           console.log(error);
         })
