@@ -12,13 +12,7 @@ const Web3WsProvider = require('web3-providers-ws');
 const HDWalletProvider = require("truffle-hdwallet-provider");
 const Web3 = require('web3');
 
-const connectionProvider = new Web3WsProvider(PROVIDER);
-const zeroExPrivateKeys = ["3a30f6a3d4dee81eacc917782b58f40c9d2846251866d35c2180e83ea94982d9"];
 
-const walletProvider = new HDWalletProvider(zeroExPrivateKeys, connectionProvider);
-const web3 = new Web3(walletProvider);
-
-const CCR_CONTRACT = new web3.eth.Contract(CCR_ABI, CCR_CONTRACT_ADDRESS);
 // const CRC_CONTRACT = new web3.eth.Contract(CRC_ABI, CRC_CONTRACT_ADDRESS);
 
 const corsOpts = {
@@ -117,6 +111,13 @@ const btoa = (text) => {
 };
 
 const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => {
+  const connectionProvider = new Web3WsProvider(PROVIDER);
+  const zeroExPrivateKeys = ["3a30f6a3d4dee81eacc917782b58f40c9d2846251866d35c2180e83ea94982d9"];
+
+  const walletProvider = new HDWalletProvider(zeroExPrivateKeys, connectionProvider);
+  const web3 = new Web3(walletProvider);
+
+  const CCR_CONTRACT = new web3.eth.Contract(CCR_ABI, CCR_CONTRACT_ADDRESS);
   const [account] = await web3.eth.getAccounts();
   const nonce = await web3.eth.getTransactionCount(account) + 1
   const accountNonce = '0x' + (nonce).toString(16);
