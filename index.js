@@ -131,7 +131,7 @@ const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => 
   const CCR_CONTRACT = new web3.eth.Contract(CCR_ABI, CCR_CONTRACT_ADDRESS);
   const [account] = await web3.eth.getAccounts();
   console.log(account)
-  const nonce = await web3.eth.getTransactionCount(account) + 1
+  const nonce = await web3.eth.getTransactionCount(account)
   const accountNonce = '0x' + (nonce).toString(16);
 
   console.log(accountNonce);
