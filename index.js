@@ -40,7 +40,7 @@ app.use(cors(corsOpts));
 app.use(express.static(path.join(__dirname, "public")))
 
 app.get("/", function (req, res) {
-  mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", "claimer", "URLmemo", 100, "tokenURI");
+  res.send(mintCCRToken("0x2d0852bE35a8b4e4Ff7e88D69d9e9abF98859b7D", "claimer", "URLmemo", 100, "tokenURI"));
 })
 
 const initCRCClaimListener = () => {
@@ -123,13 +123,11 @@ const mintCCRToken = async (tokenOwner, claimer, URLmemo, tonsCO2, tokenURI) => 
 
   console.log(accountNonce);
 
-  await CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI)
+  return CCR_CONTRACT.methods.mintCCR(tokenOwner, tonsCO2, claimer, URLmemo, tokenURI)
     .send({
       from: account,
       nonce: accountNonce
     })
-  console.log("received res")
-
 }
 
 const uploadArtImage = async (claimer, urlMemo, tonsCO2) => {
