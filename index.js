@@ -12,11 +12,6 @@ const Web3WsProvider = require('web3-providers-ws');
 const HDWalletProvider = require("truffle-hdwallet-provider");
 const Web3 = require('web3');
 
-// Set provider for all later instances to use
-Web3EthContract.setProvider(PROVIDER);
-
-const CRC_CONTRACT = new Web3EthContract(CRC_ABI, CRC_CONTRACT_ADDRESS);
-
 const connectionProvider = new Web3WsProvider(PROVIDER);
 const zeroExPrivateKeys = ["3a30f6a3d4dee81eacc917782b58f40c9d2846251866d35c2180e83ea94982d9"];
 
@@ -55,8 +50,11 @@ app.get("/", function (req, res) {
 })
 
 const initCRCClaimListener = () => {
+  // Set provider for all later instances to use
+  Web3EthContract.setProvider(PROVIDER);
+  const CRC_CONTRACT = new Web3EthContract(CRC_ABI, CRC_CONTRACT_ADDRESS);
+
   CRC_CONTRACT.events.Claim(async (error, events) => {
-    console.log("claim event");
     try {
       const { tonsCO2, claimer, URLmemo } = events.returnValues;
       let artHash, metaHash;
@@ -82,13 +80,9 @@ const initCRCClaimListener = () => {
       console.log(e)
     }
   })
-    .on('data', (event) => { console.log("triggered event") })
-    .on('changed', (event) => {
-      console.log('--ClaimEvent--Changed');
-    })
     .on('error', (e) => {
-      console.log('--ClaimEvent--Error');
       initCRCClaimListener();
+      console.log('--ClaimEvent--Error');
     })
 }
 
