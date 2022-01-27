@@ -18,8 +18,6 @@ const zeroExPrivateKeys = ["3a30f6a3d4dee81eacc917782b58f40c9d2846251866d35c2180
 const walletProvider = new HDWalletProvider(zeroExPrivateKeys, connectionProvider);
 const web3 = new Web3(walletProvider);
 
-// const CRC_CONTRACT = new web3.eth.Contract(CRC_ABI, CRC_CONTRACT_ADDRESS);
-
 const corsOpts = {
   origin: '*',
   methods: [
