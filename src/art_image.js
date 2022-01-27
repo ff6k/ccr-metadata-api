@@ -9,11 +9,11 @@ const artImage = (obj) => {
         <style>tspan{white-space:pre}.t0{font-size: 48px;fill: #000000;font-family: "Myriad Pro"}.t1{font-size: 60px;fill: #000000;font-family: "Myriad Pro"}</style>
         <use href="#img1" transform="matrix(1,0,0,1,0,0)" />
         <text style="transform: matrix(1,0,0,1,1133.646,897.108)">
-            <tspan x="28.5" y="33.6" class="t0">${mintDate}
+            <tspan x="38.5" y="33.6" class="t0">${mintDate}
     </tspan>
         </text>
         <text style="transform: matrix(1,0,0,1,1133.646,666.209)">
-            <tspan x="${(150 - (tonsCO2.toString()).length * 10).toString()}" y="33.6" class="t0">${tonsCO2}</tspan>
+            <tspan x="${(140 - (tonsCO2.toString()).length * 10).toString()}" y="33.6" class="t0">${tonsCO2}</tspan>
         </text>
         <text style="transform: matrix(1,0,0,1,109.466,799.65)">
             <tspan x="0" y="33.6" class="t0">${urlMemo}
