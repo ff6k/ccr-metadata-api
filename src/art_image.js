@@ -13,7 +13,7 @@ const artImage = (obj) => {
     </tspan>
         </text>
         <text style="transform: matrix(1,0,0,1,1133.646,666.209)">
-            <tspan x="${(140 - (tonsCO2.toString()).length * 10).toString()}" y="33.6" class="t0">${tonsCO2}</tspan>
+            <tspan x="${(150 - (tonsCO2.toString()).length * 10).toString()}" y="33.6" class="t0">${tonsCO2}</tspan>
         </text>
         <text style="transform: matrix(1,0,0,1,109.466,799.65)">
             <tspan x="0" y="33.6" class="t0">${urlMemo}
