@@ -49,10 +49,10 @@ const initCRCClaimListener = () => {
   CRC_CONTRACT.events.Claim(async (error, events) => {
     try {
       console.log("claim event")
-      const { tonsCO2, claimer, URLmemo, tokenOwner } = events.returnValues;
+      const { tonsCO2, claimer, claimerMemo, tokenOwner } = events.returnValues;
       let artHash, metaHash;
       while (true) {
-        let temp = await uploadArtImage(claimer, URLmemo, tonsCO2);
+        let temp = await uploadArtImage(claimer, claimerMemo, tonsCO2);
         if (temp) {
           artHash = temp; break;
         }
@@ -60,14 +60,14 @@ const initCRCClaimListener = () => {
       }
 
       while (true) {
-        let temp = await uploadMetaJson(claimer, URLmemo, tonsCO2, artHash);
+        let temp = await uploadMetaJson(claimer, claimerMemo, tonsCO2, artHash);
         if (temp) {
           metaHash = temp; break;
         }
         continue;
       }
       const tokenURI = `ipfs://${metaHash}`
-      await mintCCRToken(tokenOwner, claimer, URLmemo, tonsCO2, tokenURI);
+      await mintCCRToken(tokenOwner, claimer, claimerMemo, tonsCO2, tokenURI);
       console.log('token minted'); return;
     } catch (e) {
       console.log(e)
@@ -144,7 +144,7 @@ const uploadMetaJson = async (claimer, urlMemo, tonsCO2, artHash) => {
             "value": tonsCO2
           },
           {
-            "trait_type": "URLMemo",
+            "trait_type": "ClaimerMemo",
             "value": urlMemo
           }
         ],
